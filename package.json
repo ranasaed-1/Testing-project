@@ -1,0 +1,33 @@
+{
+  "name": "testing1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "test:headed": "cypress open",
+    "test:e2e": "cypress run --spec 'cypress/e2e/testCases.cy.js'",
+    "test:bdd": "cypress run --spec 'cypress/e2e/features/**/*.feature'"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Practice Software Testing - Cypress Automation Project",
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": false,
+    "stepDefinitions": "cypress/step_definitions/**/*.js"
+  },
+  "dependencies": {
+    "chai": "^6.2.2",
+    "mocha": "^11.7.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.5",
+    "@badeball/cypress-cucumber-preprocessor": "^24.0.1",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "@cypress/webpack-preprocessor": "^7.1.0",
+    "babel-loader": "^10.1.1",
+    "cypress": "^15.15.0",
+    "esbuild": "^0.25.4",
+    "webpack": "^5.106.2"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "searchTerms": {
+    "hammer": {
+      "term": "hammer",
+      "expectedResult": "Hammer"
+    },
+    "pliers": {
+      "term": "pliers",
+      "expectedResult": "Pliers"
+    },
+    "screwdriver": {
+      "term": "screwdriver",
+      "expectedResult": "Screwdriver"
+    }
+  },
+  "categories": {
+    "handTools": "Hand Tools",
+    "powerTools": "Power Tools"
+  },
+  "expectedProductFields": ["name", "price", "image"]
+}

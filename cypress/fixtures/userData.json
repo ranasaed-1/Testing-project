@@ -1,0 +1,24 @@
+{
+  "validUser": {
+    "email": "customer@practicesoftwaretesting.com",
+    "password": "welcome01",
+    "firstName": "Jane",
+    "lastName": "Doe"
+  },
+  "invalidUser": {
+    "email": "invalid@example.com",
+    "password": "wrongpassword"
+  },
+  "product": {
+    "name": "Combination Pliers",
+    "searchTerm": "hammer",
+    "category": "Hand Tools"
+  },
+  "contact": {
+    "firstName": "John",
+    "lastName": "Smith",
+    "email": "john.smith@example.com",
+    "subject": "Return",
+    "message": "I would like to return a product I purchased last week. Please advise on the return procedure."
+  }
+}

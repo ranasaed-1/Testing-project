@@ -1,0 +1,81 @@
+name: Cypress Tests – CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  cypress-run:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Run tests in parallel across 2 containers
+        containers: [1, 2]
+
+    steps:
+      # ── Step 1: Check out the repository ──────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Step 2: Set up Node.js ─────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      # ── Step 3: Install project dependencies ──────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Step 4: Run Cypress E2E tests (testCases.cy.js) ───────
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          spec: cypress/e2e/testCases.cy.js
+          wait-on: "https://practicesoftwaretesting.com"
+          wait-on-timeout: 60
+        env:
+          CYPRESS_BASE_URL: https://practicesoftwaretesting.com
+
+      # ── Step 5: Run Cypress BDD feature tests ─────────────────
+      - name: Run Cypress BDD (Cucumber) tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          spec: "cypress/e2e/features/**/*.feature"
+          wait-on: "https://practicesoftwaretesting.com"
+          wait-on-timeout: 60
+          install: false
+        env:
+          CYPRESS_BASE_URL: https://practicesoftwaretesting.com
+
+      # ── Step 6: Upload screenshots on failure ─────────────────
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-${{ matrix.containers }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # ── Step 7: Upload test videos ────────────────────────────
+      - name: Upload test videos
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos-${{ matrix.containers }}
+          path: cypress/videos
+          if-no-files-found: ignore
+          retention-days: 7

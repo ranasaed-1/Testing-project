@@ -1,0 +1,18 @@
+{
+  "valid": {
+    "email": "customer@practicesoftwaretesting.com",
+    "password": "welcome01"
+  },
+  "invalid": {
+    "email": "notauser@fake.com",
+    "password": "badpassword123"
+  },
+  "emptyEmail": {
+    "email": "",
+    "password": "welcome01"
+  },
+  "emptyPassword": {
+    "email": "customer@practicesoftwaretesting.com",
+    "password": ""
+  }
+}
