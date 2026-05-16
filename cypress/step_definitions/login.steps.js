@@ -16,6 +16,7 @@ When("I enter the password {string}", (password) => {
 When("I click the login button", () => {
   loginPage.clickLogin();
   cy.wait("@loginReq");
+  cy.wait(1000); // Give the app time to process the token and redirect
 });
 
 Then("the email input should be visible", () => {

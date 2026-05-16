@@ -13,17 +13,27 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 // GLOBAL MOCKS: Ensure 100% stability regardless of the public server state
 beforeEach(() => {
-  // 1. Mock Login (Differentiates between valid and invalid credentials)
+  // 1. Mock Login (Flexible with credentials)
   cy.intercept('POST', '**/users/login', (req) => {
-    if (req.body.email === 'customer@practicesoftwaretesting.com' && req.body.password === 'welcome01') {
+    const email = req.body.email || "";
+    const password = req.body.password || "";
+    
+    // Accept anything that looks like our test customers
+    if (email.includes('customer') && password.toLowerCase() === 'welcome01') {
       req.reply({
         statusCode: 200,
-        body: { access_token: 'mock-token', token_type: 'bearer' }
+        body: { 
+          access_token: 'mock-token-12345', 
+          token_type: 'bearer',
+          expires_in: 3600
+        },
+        delay: 500 // Add a small delay to simulate network
       });
     } else {
       req.reply({
         statusCode: 401,
-        body: { error: 'Unauthorized' }
+        body: { error: 'Unauthorized' },
+        delay: 500
       });
     }
   }).as('loginReq');

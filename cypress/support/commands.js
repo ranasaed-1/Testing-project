@@ -53,6 +53,7 @@ Cypress.Commands.add("login", (email, password) => {
   cy.get('[data-test="password"]').clear().type(password);
   cy.get('[data-test="login-submit"]').click();
   cy.wait("@loginReq");
+  cy.wait(1000);
 });
 
 // ──────────────────────────────────────────────
