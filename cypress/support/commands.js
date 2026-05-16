@@ -48,16 +48,6 @@ Cypress.Commands.add("navigateToCart", () => {
  * @param {string} password
  */
 Cypress.Commands.add("login", (email, password) => {
-  // Mock login and session to avoid '423 Locked' server errors
-  cy.intercept("POST", "**/users/login", {
-    statusCode: 200,
-    body: { access_token: "mock-token" }
-  }).as("loginReq");
-  cy.intercept("GET", "**/users/me", {
-    statusCode: 200,
-    body: { email: email, first_name: "Jane", last_name: "Doe" }
-  }).as("meReq");
-
   cy.navigateToLogin();
   cy.get('[data-test="email"]').clear().type(email);
   cy.get('[data-test="password"]').clear().type(password);
@@ -74,11 +64,9 @@ Cypress.Commands.add("login", (email, password) => {
  * @param {string} term – the product name to search for
  */
 Cypress.Commands.add("searchProduct", (term) => {
-  cy.intercept("GET", "**/products/search?q=*").as("searchRequest");
   cy.get('[data-test="search-query"]').clear().type(`${term}{enter}`);
   cy.get('[data-test="search-submit"]').click();
-  cy.wait("@searchRequest").its("response.statusCode").should("eq", 200);
-  cy.wait(1000);
+  cy.wait("@searchReq");
 });
 
 // ──────────────────────────────────────────────

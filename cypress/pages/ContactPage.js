@@ -46,14 +46,13 @@ class ContactPage {
   }
 
   fillAndSubmit({ firstName, lastName, email, subject, message }) {
-    cy.intercept("POST", "**/messages").as("contactRequest");
     this.fillFirstName(firstName);
     this.fillLastName(lastName);
     this.fillEmail(email);
     this.selectSubject(subject);
     this.fillMessage(message);
     this.submit();
-    cy.wait("@contactRequest");
+    cy.wait("@contactReq");
     return this;
   }
 

@@ -29,12 +29,11 @@ class LoginPage {
   }
 
   login(email, password) {
-    cy.intercept("POST", "**/users/login").as("loginRequest");
     this.visit();
     this.typeEmail(email);
     this.typePassword(password);
     this.clickLogin();
-    cy.wait("@loginRequest");
+    cy.wait("@loginReq");
     return this;
   }
 

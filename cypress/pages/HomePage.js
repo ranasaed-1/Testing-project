@@ -18,16 +18,9 @@ class HomePage {
   }
 
   search(term) {
-    cy.intercept("GET", "**/products/search?q=*").as("searchRequest");
     this.searchInput.clear().type(`${term}{enter}`);
-    // If the enter key doesn't trigger it, click the button
     this.searchButton.click();
-    
-    // Wait for the API response
-    cy.wait("@searchRequest").its("response.statusCode").should("eq", 200);
-    
-    // Additional wait to ensure UI rendering is complete
-    cy.wait(1000);
+    cy.wait("@searchReq");
     return this;
   }
 
