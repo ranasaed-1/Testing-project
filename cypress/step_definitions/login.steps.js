@@ -14,8 +14,9 @@ When("I enter the password {string}", (password) => {
 });
 
 When("I click the login button", () => {
+  cy.intercept("POST", "**/users/login").as("loginRequest");
   loginPage.clickLogin();
-  cy.wait(2000);
+  cy.wait("@loginRequest");
 });
 
 Then("the email input should be visible", () => {

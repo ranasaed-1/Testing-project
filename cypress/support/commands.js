@@ -18,7 +18,7 @@ Cypress.Commands.add("visitHomepage", () => {
  * Navigate to the login page.
  */
 Cypress.Commands.add("navigateToLogin", () => {
-  cy.visit("/#/auth/login");
+  cy.visit("/auth/login");
   cy.get('[data-test="email"]').should("be.visible");
 });
 
@@ -26,7 +26,7 @@ Cypress.Commands.add("navigateToLogin", () => {
  * Navigate to the contact page.
  */
 Cypress.Commands.add("navigateToContact", () => {
-  cy.visit("/#/contact");
+  cy.visit("/contact");
   cy.get('[data-test="first-name"]').should("be.visible");
 });
 
@@ -34,7 +34,7 @@ Cypress.Commands.add("navigateToContact", () => {
  * Navigate to the cart/checkout page.
  */
 Cypress.Commands.add("navigateToCart", () => {
-  cy.visit("/#/checkout");
+  cy.visit("/checkout");
   cy.get("body").should("be.visible");
 });
 
@@ -63,9 +63,11 @@ Cypress.Commands.add("login", (email, password) => {
  * @param {string} term – the product name to search for
  */
 Cypress.Commands.add("searchProduct", (term) => {
-  cy.get('[data-test="search-query"]').clear().type(term);
+  cy.intercept("GET", "**/products/search?q=*").as("searchRequest");
+  cy.get('[data-test="search-query"]').clear().type(`${term}{enter}`);
   cy.get('[data-test="search-submit"]').click();
-  cy.wait(2000);
+  cy.wait("@searchRequest").its("response.statusCode").should("eq", 200);
+  cy.wait(1000);
 });
 
 // ──────────────────────────────────────────────
