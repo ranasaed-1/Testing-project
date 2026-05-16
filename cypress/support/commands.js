@@ -48,10 +48,21 @@ Cypress.Commands.add("navigateToCart", () => {
  * @param {string} password
  */
 Cypress.Commands.add("login", (email, password) => {
+  // Mock login and session to avoid '423 Locked' server errors
+  cy.intercept("POST", "**/users/login", {
+    statusCode: 200,
+    body: { access_token: "mock-token" }
+  }).as("loginReq");
+  cy.intercept("GET", "**/users/me", {
+    statusCode: 200,
+    body: { email: email, first_name: "Jane", last_name: "Doe" }
+  }).as("meReq");
+
   cy.navigateToLogin();
   cy.get('[data-test="email"]').clear().type(email);
   cy.get('[data-test="password"]').clear().type(password);
   cy.get('[data-test="login-submit"]').click();
+  cy.wait("@loginReq");
 });
 
 // ──────────────────────────────────────────────

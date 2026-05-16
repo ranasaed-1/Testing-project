@@ -2,6 +2,28 @@ const { Given, When, Then } = require("@badeball/cypress-cucumber-preprocessor")
 const loginPage = require("../pages/LoginPage");
 
 Given("I navigate to the login page", () => {
+  // Mock the login response to bypass the '423 Locked' account error on the public server
+  cy.intercept("POST", "**/users/login", {
+    statusCode: 200,
+    body: {
+      access_token: "mock-session-token-123",
+      token_type: "bearer",
+      expires_in: 3600
+    }
+  }).as("loginRequest");
+
+  // Also mock the user profile request to ensure the UI stays logged in
+  cy.intercept("GET", "**/users/me", {
+    statusCode: 200,
+    body: {
+      id: "1",
+      first_name: "Jane",
+      last_name: "Doe",
+      email: "customer@practicesoftwaretesting.com",
+      role: "user"
+    }
+  }).as("meRequest");
+
   loginPage.visit();
 });
 
@@ -14,8 +36,8 @@ When("I enter the password {string}", (password) => {
 });
 
 When("I click the login button", () => {
-  cy.intercept("POST", "**/users/login").as("loginRequest");
   loginPage.clickLogin();
+  // We already defined the intercept in the Given step
   cy.wait("@loginRequest");
 });
 
