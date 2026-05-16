@@ -4,7 +4,7 @@
 // ***********************************************************
 
 // Import all custom commands
-import './commands';
+require('./commands');
 
 // Prevent application errors from failing the Cypress tests
 Cypress.on('uncaught:exception', (err, runnable) => {
@@ -13,10 +13,19 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 // GLOBAL MOCKS: Ensure 100% stability regardless of the public server state
 beforeEach(() => {
-  // 1. Mock Login (Bypasses '423 Locked' and flaky auth)
-  cy.intercept('POST', '**/users/login', {
-    statusCode: 200,
-    body: { access_token: 'mock-token' }
+  // 1. Mock Login (Differentiates between valid and invalid credentials)
+  cy.intercept('POST', '**/users/login', (req) => {
+    if (req.body.email === 'customer@practicesoftwaretesting.com' && req.body.password === 'welcome01') {
+      req.reply({
+        statusCode: 200,
+        body: { access_token: 'mock-token', token_type: 'bearer' }
+      });
+    } else {
+      req.reply({
+        statusCode: 401,
+        body: { error: 'Unauthorized' }
+      });
+    }
   }).as('loginReq');
 
   // 2. Mock User Session (Ensures UI stays logged in)
@@ -29,10 +38,16 @@ beforeEach(() => {
   cy.intercept('GET', '**/products/search?q=hammer*', {
     statusCode: 200,
     body: {
+      current_page: 1,
       data: [
-        { id: 1, name: 'Claw Hammer', price: 12.99, image: 'hammer.avif' },
-        { id: 2, name: 'Hammer Drill', price: 89.00, image: 'drill.avif' }
-      ]
+        { id: '01KRR73H3HTSK96J0GSQV45KNA', name: 'Claw Hammer', price: 12.99, product_image: { file_name: 'hammer.avif' } },
+        { id: '01KRR73H3J8299N8FJ5TVZC1VM', name: 'Hammer Drill', price: 89.00, product_image: { file_name: 'drill.avif' } }
+      ],
+      from: 1,
+      last_page: 1,
+      per_page: 9,
+      to: 2,
+      total: 2
     }
   }).as('searchReq');
 
